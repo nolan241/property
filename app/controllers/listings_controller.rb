@@ -1,5 +1,6 @@
 class ListingsController < ApplicationController
     before_action :find_listing, only: [:show, :edit, :update, :destroy]
+    before_action :authenticate_user!, except: [:index, :show]
     
     def index
         @listings = Listing.all.order("created_at DESC")
@@ -9,11 +10,11 @@ class ListingsController < ApplicationController
     end
     
     def new
-        @listing = Listing.new
+        @listing = current_user.listings.build
     end
     
     def create
-        @listing = Listing.new(listing_params)
+        @listing = current_user.listings.build(listing_params)
         
         if @listing.save
             redirect_to @listing
